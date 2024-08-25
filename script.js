@@ -152,3 +152,4 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('registration').classList.add('show');
     document.getElementById('registration').style.display = 'block';
 });
+    
