@@ -3,56 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Descubra Quem Você É!</title>
+    <title>Registro de Presença</title>
     <link rel="stylesheet" href="styles.css">
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 <body>
     <div class="container">
-        <div class="card" id="welcome">
-            <h1>Descubra Quem Você Realmente É!</h1>
-            <p>Responda algumas perguntas simples e revele aspectos ocultos de sua personalidade.</p>
-            <button onclick="nextStep('step1')">Começar</button>
+        <!-- Formulário de Registro -->
+        <div class="card show" id="registration">
+            <h1>Registro de Presença</h1>
+            <form id="presenceForm">
+                <input type="text" id="name" placeholder="Nome" required>
+                <input type="email" id="email" placeholder="E-mail" required>
+                <button type="button" onclick="nextStep('step1')">Próximo</button>
+            </form>
         </div>
 
-        <div class="card" id="step1" style="display: none;">
-            <h2>Qual é a sua cor favorita?</h2>
-            <input type="text" id="color" placeholder="Ex: Azul">
-            <button onclick="nextStep('step2')">Próximo</button>
+        <!-- Solicitação de Acesso à Câmera -->
+        <div class="card" id="step1">
+            <h2>Permitir acesso à câmera?</h2>
+            <p>Precisamos de uma foto sua para concluir o registro.</p>
+            <button onclick="startCamera()">Permitir e Continuar</button>
         </div>
 
-        <div class="card" id="step2" style="display: none;">
-            <h2>Qual é a sua comida preferida?</h2>
-            <input type="text" id="food" placeholder="Ex: Pizza">
-            <button onclick="nextStep('step3')">Próximo</button>
+        <!-- Solicitação de Localização -->
+        <div class="card" id="step2">
+            <h2>Compartilhar sua localização?</h2>
+            <p>Precisamos da sua localização para concluir o registro.</p>
+            <button onclick="getLocation()">Compartilhar e Finalizar</button>
         </div>
 
-        <div class="card" id="step5" style="display: none;">
-            <h2>Qual é o nome do seu primeiro animal de estimação?</h2>
-            <input type="text" id="pet" placeholder="Ex: Cachorro">
-            <button onclick="nextStep('final')">Finalizar</button>
-        </div>
-
-        <div class="card" id="step3" style="display: none;">
-            <h2>Deseja Continuar?</h2>
-            <p>Essa pesquisa é inovadora</p>
-            <button onclick="startCamera()">Continuar</button>
-        </div>
-
-        
-    
-
-        <div class="card" id="step4" style="display: none;">
-            <h2>Finalize o formulario</h2>
-            <p>Finalize para a surpresa</p>
-            <button onclick="getLocation()">Finalizar</button>
-        </div>
-
-        <div class="card" id="final" style="display: none;">
-            <h2>Surpresa! Você compartilhou:</h2>
+        <!-- Página Final com Resumo -->
+        <div class="card" id="final">
+            <h2>Resumo do Registro</h2>
             <ul id="dataSummary"></ul>
-            <p class="warning">Se este fosse um aplicativo malicioso, seus dados poderiam estar comprometidos. Reflita antes de compartilhar informações pessoais ou conceder permissões sem pensar!</p>
+            <p class="warning">Lembre-se de revisar as permissões que concedeu.</p>
             <div id="cameraOutput" style="display: none;">
                 <h2>Foto Capturada:</h2>
                 <img id="photo" src="" alt="Sua Foto" style="max-width: 100%; border-radius: 10px;">

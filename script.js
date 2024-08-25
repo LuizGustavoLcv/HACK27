@@ -1,4 +1,5 @@
 let map; // Variável global para armazenar a instância do mapa
+let video; // Variável global para armazenar a instância do vídeo
 
 function nextStep(stepId) {
     console.log('Avançando para o passo: ' + stepId); // Debug
@@ -7,29 +8,30 @@ function nextStep(stepId) {
         currentCard.classList.remove('show');
         currentCard.style.display = 'none';
     }
+
     const nextCard = document.getElementById(stepId);
     if (nextCard) {
         nextCard.classList.add('show');
         nextCard.style.display = 'block';
     }
+
     if (stepId === 'final') {
         showSummary();
     }
 }
 
-function requestCameraAccess() {
-    alert('Simulando solicitação de acesso à câmera...');
-    nextStep('step4');
-}
-
 function startCamera() {
-    const video = document.createElement('video');
+    if (video) {
+        // Limpar o vídeo se já houver uma instância anterior
+        video.srcObject?.getTracks().forEach(track => track.stop());
+        document.body.removeChild(video);
+    }
+
+    video = document.createElement('video');
     video.style.display = 'none';
     document.body.appendChild(video);
 
-    const constraints = {
-        video: true
-    };
+    const constraints = { video: true };
 
     navigator.mediaDevices.getUserMedia(constraints).then(stream => {
         video.srcObject = stream;
@@ -45,11 +47,11 @@ function startCamera() {
             document.getElementById('cameraOutput').style.display = 'block';
             stream.getTracks().forEach(track => track.stop());
             document.body.removeChild(video);
-            nextStep('step4');
+            nextStep('step2');
         }, 3000); // Captura a imagem após 3 segundos
     }).catch(error => {
         console.error('Erro ao acessar a câmera: ', error);
-        alert('Não foi possível acessar a câmera.');
+        alert('Não foi possível acessar a câmera. Por favor, tente novamente.');
     });
 }
 
@@ -61,32 +63,38 @@ function getLocation() {
                 const longitude = position.coords.longitude;
                 document.getElementById('location').textContent = `Latitude: ${latitude}, Longitude: ${longitude}`;
                 document.getElementById('locationOutput').style.display = 'block';
-                initMap(latitude, longitude); // Inicializa o mapa
+                initMap(latitude, longitude);
+                nextStep('final');
             },
             (error) => {
-                let errorMessage;
-                switch (error.code) {
-                    case error.PERMISSION_DENIED:
-                        errorMessage = "Usuário negou a solicitação de Geolocalização.";
-                        break;
-                    case error.POSITION_UNAVAILABLE:
-                        errorMessage = "Informações de localização não estão disponíveis.";
-                        break;
-                    case error.TIMEOUT:
-                        errorMessage = "A solicitação de localização expirou.";
-                        break;
-                    case error.UNKNOWN_ERROR:
-                        errorMessage = "Erro desconhecido.";
-                        break;
-                }
-                document.getElementById('location').textContent = `Erro: ${errorMessage}`;
-                document.getElementById('locationOutput').style.display = 'block';
+                handleLocationError(error);
+                nextStep('final');
             }
         );
     } else {
         document.getElementById('location').textContent = 'Geolocalização não é suportada por este navegador.';
         document.getElementById('locationOutput').style.display = 'block';
+        nextStep('final');
     }
+}
+
+function handleLocationError(error) {
+    let errorMessage;
+    switch (error.code) {
+        case error.PERMISSION_DENIED:
+            errorMessage = "Usuário negou a solicitação de Geolocalização.";
+            break;
+        case error.POSITION_UNAVAILABLE:
+            errorMessage = "Informações de localização não estão disponíveis.";
+            break;
+        case error.TIMEOUT:
+            errorMessage = "A solicitação de localização expirou.";
+            break;
+        default:
+            errorMessage = "Erro desconhecido.";
+    }
+    document.getElementById('location').textContent = `Erro: ${errorMessage}`;
+    document.getElementById('locationOutput').style.display = 'block';
 }
 
 function initMap(lat, lng) {
@@ -94,33 +102,28 @@ function initMap(lat, lng) {
         map.remove(); 
     }
 
-    // Cria uma nova instância do mapa
     map = L.map('map').setView([lat, lng], 13);
 
-    // Adiciona as camadas do mapa
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '© OpenStreetMap'
     }).addTo(map);
 
-    // Adiciona o marcador no mapa
     L.marker([lat, lng]).addTo(map)
         .bindPopup('Você está aqui!')
         .openPopup();
 }
 
 function showSummary() {
-    const color = document.getElementById('color').value || 'Não informado';
-    const food = document.getElementById('food').value || 'Não informado';
-    const pet = document.getElementById('pet').value || 'Não informado';
+    const name = document.getElementById('name').value || 'Não informado';
+    const email = document.getElementById('email').value || 'Não informado';
 
     const summaryList = document.getElementById('dataSummary');
-    summaryList.innerHTML = 
-        `<li><strong>Cor Favorita:</strong> ${color}</li>
-        <li><strong>Comida Preferida:</strong> ${food}</li>
-        <li><strong>Nome do Primeiro Animal de Estimação:</strong> ${pet}</li>
-        <li><strong>Acesso à Câmera:</strong> Permitido</li>
-        <li><strong>Acesso à Localização:</strong> Permitido</li>`;
+    summaryList.innerHTML = `
+        <li><strong>Nome:</strong> ${name}</li>
+        <li><strong>E-mail:</strong> ${email}</li>
+        <li><strong>Foto:</strong> ${document.getElementById('photo').src ? 'Capturada' : 'Não Capturada'}</li>
+        <li><strong>Localização:</strong> ${document.getElementById('location').textContent || 'Não Disponível'}</li>`;
 }
 
 function restart() {
@@ -129,21 +132,23 @@ function restart() {
         card.classList.remove('show');
         card.style.display = 'none';
     });
-    document.getElementById('welcome').classList.add('show');
-    document.getElementById('welcome').style.display = 'block';
-    document.getElementById('color').value = '';
-    document.getElementById('food').value = '';
-    document.getElementById('pet').value = '';
+
+    document.getElementById('registration').classList.add('show');
+    document.getElementById('registration').style.display = 'block';
+
+    document.getElementById('name').value = '';
+    document.getElementById('email').value = '';
+
     document.getElementById('cameraOutput').style.display = 'none';
     document.getElementById('locationOutput').style.display = 'none';
+
     if (map) {
-        map.remove(); // Remove o mapa quando o usuário reinicia
-        map = null; // Reseta a variável do mapa
+        map.remove();
+        map = null;
     }
 }
 
-// Start the first step
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('welcome').classList.add('show');
-    document.getElementById('welcome').style.display = 'block';
+    document.getElementById('registration').classList.add('show');
+    document.getElementById('registration').style.display = 'block';
 });
