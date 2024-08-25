@@ -9,12 +9,13 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    overflow: hidden;
+    overflow: auto;
 }
 
+/* Container do Formulário */
 .container {
     width: 100%;
-    max-width: 400px;
+    max-width: 600px;
     padding: 20px;
     box-sizing: border-box;
 }
@@ -30,175 +31,72 @@ body {
     opacity: 0;
     transform: translateY(50px);
     transition: all 0.5s ease-in-out;
-    display: none;
-}
-
-.card.show {
-    opacity: 1;
-    transform: translateY(0);
     display: block;
 }
 
-.card h1, .card h2 {
-    margin-bottom: 20px;
+/* Exibe o cartão ativo */
+.card.show {
+    opacity: 1;
+    transform: translateY(0);
 }
 
-.card p {
-    font-size: 16px;
-    line-height: 1.5;
-}
-
-.card input {
+/* Estilos dos Inputs */
+input[type="text"],
+input[type="email"],
+input[type="file"] {
     width: calc(100% - 20px);
     padding: 10px;
-    border: none;
+    margin: 10px 0;
+    border: 1px solid #ddd;
     border-radius: 5px;
-    margin-bottom: 20px;
-    font-size: 16px;
     box-sizing: border-box;
 }
 
-.card button {
-    padding: 10px 20px;
-    background-color: #00c6ff;
-    border: none;
-    border-radius: 5px;
+/* Estilos dos Botões */
+button {
+    background-color: #007bff;
     color: white;
-    font-size: 18px;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
     cursor: pointer;
+    font-size: 16px;
+    margin: 10px 0;
     transition: background-color 0.3s ease;
 }
 
-.card button:hover {
-    background-color: #007bff;
+button:hover {
+    background-color: #0056b3;
 }
 
-/* Estilos de Listas */
-ul {
-    list-style-type: none;
-    padding: 0;
-    text-align: left;
-}
-
-ul li {
-    font-size: 16px;
-    margin-bottom: 10px;
-}
-
-/* Estilos de Avisos */
-.warning {
-    font-size: 18px;
-    color: #ffcc00;
-    margin-top: 20px;
-}
-
-/* Estilos Específicos para a Última Página */
-#cameraOutput, #locationOutput {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-#photo {
-    width: 100%;
-    max-width: 100%;
-    height: auto;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
+/* Estilos do Mapa */
 #map {
-    width: 100%;
-    max-width: 100%;
-    height: 300px;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
+    height: 400px; /* Ajuste a altura padrão do mapa */
 }
 
-/* Responsividade para Telas Pequenas */
-@media (max-width: 600px) {
+/* Responsividade para dispositivos móveis */
+@media (max-width: 768px) {
+    .container {
+        width: 90%;
+        padding: 10px;
+    }
+
     .card {
         padding: 15px;
     }
 
-    .card h1 {
-        font-size: 20px;
-    }
-
-    .card h2 {
-        font-size: 18px;
-    }
-
-    .card p {
-        font-size: 14px;
-    }
-
-    .card input {
-        font-size: 14px;
-        padding: 8px;
-    }
-
-    .card button {
-        font-size: 16px;
+    button {
         padding: 8px 16px;
-    }
-
-    ul li {
         font-size: 14px;
-    }
-
-    .warning {
-        font-size: 16px;
     }
 
     #map {
-        height: 250px;
+        height: 300px; /* Ajuste a altura do mapa para telas menores */
     }
 }
 
-/* Responsividade para Telas Muito Grandes */
-@media (min-width: 1200px) {
-    .container {
-        max-width: 600px;
-    }
-
-    .card {
-        padding: 30px;
-    }
-
-    .card h1 {
-        font-size: 28px;
-    }
-
-    .card h2 {
-        font-size: 24px;
-    }
-
-    .card p {
-        font-size: 18px;
-    }
-
-    .card input {
-        font-size: 18px;
-        padding: 12px;
-    }
-
-    .card button {
-        font-size: 20px;
-        padding: 12px 24px;
-    }
-
-    ul li {
-        font-size: 18px;
-    }
-
-    .warning {
-        font-size: 20px;
-    }
-
-    #map {
-        height: 400px;
-    }
+img {
+    max-width: 100%;
+    height: auto;
 }
